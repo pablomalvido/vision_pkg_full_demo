@@ -1,0 +1,16 @@
+string img_path #Absolute path
+string wh_id #'1' or '2'
+int32[] separated_cable_index #Indexes of the cables to separate (index starts from 0 at the bottom)
+int32 pixel_D #Normally it is set to 4
+bool forward
+bool iteration
+int32[] grasp_point_eval_mm #[y,x] mm from the top corner of the mold. Positive y and x
+int32 analyzed_length #Cable length in mm to be analyzed (Normally 50-100)
+bool simplified #True to calculates just the cables of interest, False to calculate all the cables
+bool visualize #False to calculate, True to just visualize initial points
+
+---------------
+bool success #Success in the service execution
+bool separation_success #The correct cables were grasped
+string result #Text indicating the separation result
+float64[] grasp_point #[x,y] mm from the top corner of the mold

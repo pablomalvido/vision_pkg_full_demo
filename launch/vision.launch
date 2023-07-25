@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="DLO_detection_node" pkg="vision_pkg_full_demo" type="TAU_supervisor.py" output="screen">
+    </node>
+</launch>  
