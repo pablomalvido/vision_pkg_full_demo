@@ -6,6 +6,7 @@ bool forward
 bool iteration
 int32[] grasp_point_eval_mm #[y,x] mm from the top corner of the mold. Positive y and x
 int32 analyzed_length #Cable length in mm to be analyzed (Normally 50-100)
+int32 analyzed_grasp_length #Cable length in mm in which the grasp point can be located
 bool simplified #True to calculates just the cables of interest, False to calculate all the cables
 bool visualize #False to calculate, True to just visualize initial points
 

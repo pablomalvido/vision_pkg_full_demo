@@ -14,6 +14,7 @@ from sensor_msgs.msg import CompressedImage
 rospy.init_node('service_OAK_capture', anonymous=True)
 service_name = '/OAK/capture_img'
 image_pub = rospy.Publisher("/OAK/stream_compressed", CompressedImage)
+flip = True
 
 # Create pipeline
 pipeline = dai.Pipeline()
@@ -50,6 +51,7 @@ with dai.Device(pipeline) as device:
                 """
                 Service that captures an image
                 """
+                global flip
                 print("Saving img...")
                 #time.sleep(1)
                 resp = TriggerResponse()
@@ -65,7 +67,11 @@ with dai.Device(pipeline) as device:
                 img_name = "Image_cables_"+new_index+".jpg"
                 img_path = os.path.join(os.path.dirname(__file__), '../imgs/'+img_name)
                 videoIn = video.get()
-                cv2.imwrite(img_path, videoIn.getCvFrame())
+                if flip:
+                        image = cv2.flip(videoIn.getCvFrame(), 0)
+                else:
+                        image = videoIn.getCvFrame()
+                cv2.imwrite(img_path, image)
                 resp.success = True
                 resp.message = img_path
                 print("Done")
@@ -88,7 +94,10 @@ with dai.Device(pipeline) as device:
                         msg = CompressedImage()
                         msg.header.stamp = rospy.Time.now()
                         msg.format = "jpeg"
-                        msg.data = np.array(cv2.imencode('.jpg', videoIn.getCvFrame())[1]).tostring()
+                        if flip:
+                                msg.data = np.array(cv2.imencode('.jpg', cv2.flip(videoIn.getCvFrame(), 0))[1]).tostring()
+                        else:
+                                msg.data = np.array(cv2.imencode('.jpg', videoIn.getCvFrame())[1]).tostring()                       
                         image_pub.publish(msg)
 
                         if cv2.waitKey(1) == ord('q'):

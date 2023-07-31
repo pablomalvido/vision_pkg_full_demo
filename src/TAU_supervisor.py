@@ -27,7 +27,7 @@ rospy.init_node('DLO_detection_node')
 
 class DLO_estimator():
 
-    def __init__(self, img_path, all_colors, color_order, con_points, cable_D, con_dim, cable_lengths, pixel_D, model, grasping_point_eval_mm=[0,0], grasp_area_mm=[0,0], corner_mold=[[0,0],[0,0]], mold_size = 0, segm_opt = 0, index_upper=0, analyzed_length=500, simplified=False):
+    def __init__(self, img_path, all_colors, color_order, con_points, cable_D, con_dim, cable_lengths, pixel_D, model, grasping_point_eval_mm=[0,0], grasp_area_mm=[0,0], corner_mold=[[0,0],[0,0]], mold_size = 0, segm_opt = 0, index_upper=0, analyzed_length=500, analyzed_grasp_length=0, simplified=False):
 
         global show_imgs
 
@@ -39,6 +39,7 @@ class DLO_estimator():
         self.img_name = img_path.split('/')[-1]
         self.index_upper = index_upper
         self.simplified = simplified
+        self.analyzed_grasp_length = analyzed_grasp_length
         img = cv.imread(img_path)
 
         if mold_size>0:
@@ -166,7 +167,7 @@ class DLO_estimator():
         cv.imwrite(save_img_path, self.lines_cables_bkg)
 
         if determine_GP:
-            grasp_point, success_GP = get_best_grasping_point(all_points_cables_dict, self.index_upper, self.mm_per_pixel, self.lines_cables_img)
+            grasp_point, success_GP = get_best_grasping_point(all_points_cables_dict, self.index_upper, self.mm_per_pixel, self.lines_cables_img, analyzed_grasp_length = (self.analyzed_grasp_length + self.corner_mold_top_resized[1]))
             if success_GP:
                 self.grasp_img = cv.rectangle(self.grasp_img, (grasp_point[0] - 3, grasp_point[1] - 3), (grasp_point[0] + 3, grasp_point[1] + 3), [0,255,0], 2)
                 save_img_name = "Grasp_point_" + self.img_name
@@ -209,7 +210,7 @@ def grasp_point_determination_srv_callback(req):
     desired_grasp_cables = list(desired_grasp_cables_tuple)
 
     total_time_init = time.time()
-    p = DLO_estimator(img_path=req.img_path, all_colors=WH_info[req.wh_id]['cable_colors'], color_order = WH_info[req.wh_id]['cables_color_order'], con_points=WH_info[req.wh_id]['con_corners'], cable_D=WH_info[req.wh_id]['cable_D'], con_dim=WH_info[req.wh_id]['con_dim'], cable_lengths=WH_info[req.wh_id]['cable_lengths'], model=DLO_model, corner_mold=WH_info[req.wh_id]['mold_corners'], mold_size=WH_info[req.wh_id]['mold_dim'], index_upper=desired_grasp_cables[0], pixel_D=req.pixel_D, analyzed_length=req.analyzed_length, segm_opt=2, simplified=req.simplified)
+    p = DLO_estimator(img_path=req.img_path, all_colors=WH_info[req.wh_id]['cable_colors'], color_order = WH_info[req.wh_id]['cables_color_order'], con_points=WH_info[req.wh_id]['con_corners'], cable_D=WH_info[req.wh_id]['cable_D'], con_dim=WH_info[req.wh_id]['con_dim'], cable_lengths=WH_info[req.wh_id]['cable_lengths'], model=DLO_model, corner_mold=WH_info[req.wh_id]['mold_corners'], mold_size=WH_info[req.wh_id]['mold_dim'], index_upper=desired_grasp_cables[0], pixel_D=req.pixel_D, analyzed_length=req.analyzed_length, analyzed_grasp_length=req.analyzed_grasp_length, segm_opt=2, simplified=req.simplified)
     if not show_imgs:
         all_points_cables, grasp_point_from_corner_x, grasp_point_from_corner_z, success = p.exec(req.forward, req.iteration, determine_GP = True)
         total_time = time.time() - total_time_init
@@ -279,7 +280,7 @@ if __name__ == "__main__": #Load the model and define some info for each WH in a
     green_cable2 = [36,110,38]
     red_cable = [53,49,181]
     black_cable = [10,10,10]#[57,54,71]
-    white_cable = [181,184,191]
+    white_cable = [239,238,254]
     brown_cable = [27,43,80]
     pink_cable = [134,133,179]
 
@@ -292,9 +293,14 @@ if __name__ == "__main__": #Load the model and define some info for each WH in a
     WH_info['1']['cable_lengths'] = [550, 550, 550, 550, 550, 550, 550, 550, 550, 550]
     WH_info['1']['con_dim'] = 27
     WH_info['1']['cable_D'] = 1.32
-    WH_info['1']['con_corners'] = [[640, 760], [435, 755]] #below,above [y,x].
-    WH_info['1']['mold_corners'] = [[417, 750], [663, 757]] #below,above [y,x]. These points are fixed as the image is always taken from the same position
-    WH_info['1']['mold_dim'] = 40
+    #WH_info['1']['con_corners'] = [[640, 760], [435, 755]] #below,above [y,x].
+    #WH_info['1']['mold_corners'] = [[417, 750], [663, 757]] #below,above [y,x]. These points are fixed as the image is always taken from the same position
+    #WH_info['1']['mold_dim'] = 40
+    # WH_info['1']['con_corners'] = [[550, 688], [333, 686]] #below,above [y,x]. 4
+    # WH_info['1']['mold_corners'] = [[294, 682], [550, 681]] #above,below [y,x]. 4
+    WH_info['1']['con_corners'] = [[557, 890], [345, 895]] #below,above [y,x]. 10
+    WH_info['1']['mold_corners'] = [[296, 891], [557, 884]] #above,below [y,x]. 10
+    WH_info['1']['mold_dim'] = 32
     
     WH_info['2'] = {}
     WH_info['2']['cable_colors'] = [yellow_cable, blue_cable, green_cable2, red_cable, black_cable, pink_cable, brown_cable, white_cable]
@@ -306,7 +312,7 @@ if __name__ == "__main__": #Load the model and define some info for each WH in a
     WH_info['2']['cable_D'] = 1.32
     #ToDo
     WH_info['2']['con_corners'] = [[0, 0], [0, 0]] #below,above [y,x]
-    WH_info['2']['mold_corners'] = [[0, 0], [0, 0]] #below,above [y,x]. These points are fixed as the image is always taken from the same position
+    WH_info['2']['mold_corners'] = [[0, 0], [0, 0]] #above,below [y,x]. These points are fixed as the image is always taken from the same position
     WH_info['2']['mold_dim'] = 0
 
     #Load model

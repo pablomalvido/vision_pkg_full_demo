@@ -1,4 +1,4 @@
-def get_best_grasping_point(all_cables_input, index_upper, dist_per_pixel, img):
+def get_best_grasping_point(all_cables_input, index_upper, dist_per_pixel, img, analyzed_grasp_length):
     """
     all_cables_input: list with the index of the cable and its points
     indes_upper: index of the lower upper cable (index 0 is the cable in the bottom)
@@ -88,7 +88,7 @@ def get_best_grasping_point(all_cables_input, index_upper, dist_per_pixel, img):
     lower_up_cable_dict = {}
     upper_down_cable_dict = {}
     min_dist_cable_dict = {}
-    for x in range(x_limits[0], x_limits[1]+1, 1): #Do it in all the length, not in these limits
+    for x in range(x_limits[0], min(x_limits[1]+1, int((analyzed_grasp_length/dist_per_pixel))+1), 1): #Do it in all the length, not in these limits
         lower_up_x = 0 #y axis goes down
         for cable_up_dict_i in cables_up_dict:
             if cable_up_dict_i[x] > lower_up_x:

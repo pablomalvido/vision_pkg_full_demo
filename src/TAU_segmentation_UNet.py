@@ -41,7 +41,7 @@ class TAUSegmentationUNet():
             self.mask_model_final = self.get_mask_model(copy.deepcopy(self.img), IMAGE_SIZE)
         
         #cv.imshow("unet filter3", self.mask_model_final)
-        cv.imwrite(os.path.join(os.path.dirname(__file__), '../imgs/filter_image.jpg'), self.mask_model_final)
+        cv.imwrite(os.path.join(os.path.dirname(__file__), '../imgs/filter_image_0.jpg'), self.mask_model_final)
 
 
     def get_mask_model(self, image_model, IMAGE_SIZE):
