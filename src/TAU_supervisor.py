@@ -48,7 +48,7 @@ class DLO_estimator():
             self.theta = 0
 
         self.preprocessing = TAUPreprocessing(input_img = img, cable_D = cable_D, n_cables = len(color_order), con_points = con_points, con_dim=con_dim, cable_length=max(cable_lengths), pixel_D=pixel_D, grasping_point_eval_mm=grasping_point_eval_mm, grasp_area_mm=grasp_area_mm, mold_corner=corner_mold, mold_size=mold_size, analyzed_length=analyzed_length)
-        resized_img, img_init_points, con_points_resized, self.init_points, self.mm_per_pixel, self.window_size, grasping_point_eval_resized, grasp_area_resized, self.corner_mold_top_resized = self.preprocessing.exec()
+        resized_img, img_init_points, con_points_resized, self.init_points, self.mm_per_pixel, self.window_size, grasping_point_eval_resized, grasp_area_resized, self.corner_mold_top_resized, self.mold_corner_bottom_resized = self.preprocessing.exec()
         if show_imgs:
             cv.imshow("Initial points", img_init_points)
         init_col = min(con_points_resized[0][1], con_points_resized[1][1])
@@ -174,12 +174,11 @@ class DLO_estimator():
                 save_img_path = os.path.join(os.path.dirname(__file__), '../imgs/'+save_img_name)
                 cv.imwrite(save_img_path, self.grasp_img)
                 cv.imwrite('/home/remodel/UI-REMODEL/src/assets/img/grasp_image.jpg', self.grasp_img)
-                grasp_point_from_corner = []
                 grasp_x = (grasp_point[0] - self.corner_mold_top_resized[1])*self.mm_per_pixel
                 grasp_z = (self.corner_mold_top_resized[0] - grasp_point[1])*self.mm_per_pixel
                 grasp_point_from_corner_x_aligned = math.cos(self.theta)*grasp_x - math.sin(self.theta)*grasp_z
                 grasp_point_from_corner_z_aligned = math.sin(self.theta)*grasp_x + math.cos(self.theta)*grasp_z
-                print(grasp_point_from_corner)
+                #grasp_point_from_corner_z_aligned = (self.corner_mold_top_resized[0] - self.mold_corner_bottom_resized[0])*self.mm_per_pixel
                 return all_points_cables_dict, grasp_point_from_corner_x_aligned, grasp_point_from_corner_z_aligned, True
             else:
                 print("Grasp point determination error")
@@ -213,6 +212,9 @@ def grasp_point_determination_srv_callback(req):
     p = DLO_estimator(img_path=req.img_path, all_colors=WH_info[req.wh_id]['cable_colors'], color_order = WH_info[req.wh_id]['cables_color_order'], con_points=WH_info[req.wh_id]['con_corners'], cable_D=WH_info[req.wh_id]['cable_D'], con_dim=WH_info[req.wh_id]['con_dim'], cable_lengths=WH_info[req.wh_id]['cable_lengths'], model=DLO_model, corner_mold=WH_info[req.wh_id]['mold_corners'], mold_size=WH_info[req.wh_id]['mold_dim'], index_upper=desired_grasp_cables[0], pixel_D=req.pixel_D, analyzed_length=req.analyzed_length, analyzed_grasp_length=req.analyzed_grasp_length, segm_opt=2, simplified=req.simplified)
     if not show_imgs:
         all_points_cables, grasp_point_from_corner_x, grasp_point_from_corner_z, success = p.exec(req.forward, req.iteration, determine_GP = True)
+        #grasp_point_from_corner_z+=8
+        #print(grasp_point_from_corner_z)
+        #grasp_point_from_corner_z = 0
         total_time = time.time() - total_time_init
         print("Computation time: " + str(total_time) + "s")
         print("--------------------------------------------------")
@@ -298,7 +300,7 @@ if __name__ == "__main__": #Load the model and define some info for each WH in a
     #WH_info['1']['mold_dim'] = 40
     # WH_info['1']['con_corners'] = [[550, 688], [333, 686]] #below,above [y,x]. 4
     # WH_info['1']['mold_corners'] = [[294, 682], [550, 681]] #above,below [y,x]. 4
-    WH_info['1']['con_corners'] = [[557, 890], [345, 895]] #below,above [y,x]. 10
+    WH_info['1']['con_corners'] = [[552, 890], [328, 895]] #below,above [y,x]. #[557, 890], [345, 895]. 10
     WH_info['1']['mold_corners'] = [[296, 891], [557, 884]] #above,below [y,x]. 10
     WH_info['1']['mold_dim'] = 32
     

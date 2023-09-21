@@ -84,4 +84,4 @@ class TAUPreprocessing(TAUPreprocessingInterface):
 
         windows_size = [int(self.pixel_D*1.5), int(self.pixel_D*2)]
 
-        return resized_img, img_init_points, con_points_resized, init_points, mm_per_pixel, windows_size, grasping_point_eval_resized, grasp_area_resized, mold_corner_top_resized
+        return resized_img, img_init_points, con_points_resized, init_points, mm_per_pixel, windows_size, grasping_point_eval_resized, grasp_area_resized, mold_corner_top_resized, mold_corner_bottom_resized

@@ -38,3 +38,16 @@ grasp_point_eval_mm: [0,0]
 analyzed_length: 120
 simplified: false
 visualize: true"
+
+---------------------------------------------------
+rosservice call /vision/grasp_point_determination_srv "img_path: '/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/imgs/Image_cables_32.jpg'
+wh_id: '1'
+separated_cable_index: [8,9]
+pixel_D: 4
+forward: false
+iteration: false
+grasp_point_eval_mm: [0,0]
+analyzed_length: 120
+analyzed_grasp_length: 100
+simplified: true
+visualize: true"
