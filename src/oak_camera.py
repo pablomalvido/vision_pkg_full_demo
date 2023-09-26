@@ -34,7 +34,7 @@ camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
 camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
 camRgb.setVideoSize(1920, 1080)
 #print("FPS: " + str(camRgb.getFps()))
-camRgb.setFps(5)
+camRgb.setFps(20)
 
 xoutVideo.input.setBlocking(False)
 xoutVideo.input.setQueueSize(1)
@@ -83,6 +83,23 @@ with dai.Device(pipeline) as device:
         rospy.Service(service_name, Trigger, service_callback)
         print("OAK capture image service available")
 
+        
+        def video_callback(req):
+                fps=10
+                duration=15
+                i=0
+                writer= cv2.VideoWriter('/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/videos/basicvideo.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), fps, (1920,1080))
+                while i<(duration*fps):
+                        print(i)
+                        videoIn = video.get()
+                        frame = videoIn.getCvFrame()
+                        writer.write(frame)
+                        i+=1
+
+                writer.release()
+        
+        rospy.Service('/OAK/record_video', Trigger, video_callback)
+        print("OAK record video service available")
 
         while not rospy.is_shutdown():
                 try:
