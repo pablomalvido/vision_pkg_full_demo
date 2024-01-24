@@ -86,7 +86,7 @@ class DLO_estimator():
         grasped_cables = []
         wrong_estimated_cables = []
         for color in self.color_order:
-            if self.simplified and not (index >= self.index_upper-2):
+            if self.simplified and not ((index >= self.index_upper-2) and (index <= self.index_upper+1)):
                 index+=1
                 continue
 
@@ -259,6 +259,7 @@ def check_cable_separation_srv_callback(req):
             resp.result = "SUCCESSFUL CABLE SEPARATION - Grasped cables: " + str(grasped_cables)
             resp.separation_success = True
         else:
+            #resp.result = "SUCCESSFUL CABLE SEPARATION - Grasped cables: [8,9]"
             resp.result = "REVISE CABLE SEPARATION, IT MIGHT BE WRONG - Grasped cables: " + str(grasped_cables)
             resp.separation_success = False
     else:
@@ -301,21 +302,21 @@ if __name__ == "__main__": #Load the model and define some info for each WH in a
     # WH_info['1']['con_corners'] = [[550, 688], [333, 686]] #below,above [y,x]. 4
     # WH_info['1']['mold_corners'] = [[294, 682], [550, 681]] #above,below [y,x]. 4
     WH_info['1']['con_corners'] = [[552, 890], [328, 895]] #below,above [y,x]. #[557, 890], [345, 895]. 10
-    WH_info['1']['mold_corners'] = [[296, 891], [557, 884]] #above,below [y,x]. 10
+    WH_info['1']['mold_corners'] = [[262, 891], [557, 884]] #above,below [y,x]. 10
     WH_info['1']['mold_dim'] = 32
     
     WH_info['2'] = {}
     WH_info['2']['cable_colors'] = [yellow_cable, blue_cable, green_cable2, red_cable, black_cable, pink_cable, brown_cable, white_cable]
     #order: from bottom to top
-    WH_info['2']['cables_color_order'] = [red_cable, black_cable, white_cable, green_cable2, blue_cable, yellow_cable, pink_cable, brown_cable, yellow_cable, black_cable, red_cable]
+    WH_info['2']['cables_color_order'] = [red_cable, black_cable, yellow_cable, brown_cable, pink_cable, yellow_cable, blue_cable, green_cable2, white_cable, black_cable, red_cable]
     #All measures in mm
     WH_info['2']['cable_lengths'] = [80, 80, 80, 95, 95, 95, 95, 430, 430, 430, 430]
-    WH_info['2']['con_dim'] = 27
+    WH_info['2']['con_dim'] = 29.7
     WH_info['2']['cable_D'] = 1.32
     #ToDo
-    WH_info['2']['con_corners'] = [[0, 0], [0, 0]] #below,above [y,x]
-    WH_info['2']['mold_corners'] = [[0, 0], [0, 0]] #above,below [y,x]. These points are fixed as the image is always taken from the same position
-    WH_info['2']['mold_dim'] = 0
+    WH_info['2']['con_corners'] = [[580, 531], [300, 522]] #below,above [y,x]
+    WH_info['2']['mold_corners'] = [[259, 520], [580, 531]] #above,below [y,x]. These points are fixed as the image is always taken from the same position
+    WH_info['2']['mold_dim'] = 34.7 #CHECKKK
 
     #Load model
     path_model = os.path.dirname(os.path.realpath(__file__)) + "/../models/my_model_v1"

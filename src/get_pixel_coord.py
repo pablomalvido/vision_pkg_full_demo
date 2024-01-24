@@ -46,7 +46,8 @@ def click_event(event, x, y, flags, params):
 if __name__=="__main__":
   
     # reading the image
-    img_name = 'Image_cables_4.jpg'
+    img_name = 'test_image_EG_WH2_1.jpg'
+    #img_name = 'Image_cables_44.jpg'
     img = cv2.imread(os.path.join(os.path.dirname(__file__), '../imgs/'+img_name), 1)
   
     # displaying the image

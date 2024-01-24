@@ -66,7 +66,7 @@ def get_best_grasping_point(all_cables_input, index_upper, dist_per_pixel, img, 
         lower_cables_completed.append(cable)
 
     if n_top_wrong > n_top/2 or n_low_wrong > n_low/2:
-        wrong = True
+        #wrong = True
         print(n_top_wrong)
         print(n_low_wrong)
 
@@ -88,7 +88,10 @@ def get_best_grasping_point(all_cables_input, index_upper, dist_per_pixel, img, 
     lower_up_cable_dict = {}
     upper_down_cable_dict = {}
     min_dist_cable_dict = {}
-    for x in range(x_limits[0], min(x_limits[1]+1, int((analyzed_grasp_length/dist_per_pixel))+1), 1): #Do it in all the length, not in these limits
+    finger_thickness = 14.0
+    #for x in range(max(x_limits[0], int(((finger_thickness*0.75)/dist_per_pixel))), min(x_limits[1]+1, int((analyzed_grasp_length/dist_per_pixel))+1), 1): #Do it in all the length, not in these limits
+    for x in range(x_limits[0] + int(((finger_thickness*0.75)/dist_per_pixel)), min(x_limits[1]+1, int((analyzed_grasp_length/dist_per_pixel))+1), 1): #Do it in all the length, not in these limits
+        print(x)
         lower_up_x = 0 #y axis goes down
         for cable_up_dict_i in cables_up_dict:
             if cable_up_dict_i[x] > lower_up_x:
@@ -109,6 +112,7 @@ def get_best_grasping_point(all_cables_input, index_upper, dist_per_pixel, img, 
     if min_dist_cable_dict[best_x] > 0 and not wrong:
         success_grasp = True
     else:
+        print("Minimum distance: " + str(min_dist_cable_dict[best_x]))
         success_grasp = False
 
     return [best_x, best_y], success_grasp

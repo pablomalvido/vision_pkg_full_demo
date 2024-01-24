@@ -10,11 +10,13 @@ import rospy
 from sensor_msgs.msg import CompressedImage
 from std_srvs.srv import Trigger, TriggerResponse
 from std_msgs.msg import *
+from vision_pkg_full_demo.srv import *
 
 print("Initializing multiple cameras")
 rospy.init_node('multiple_OAK', anonymous=True)
-image_pub1 = rospy.Publisher("/OAK/stream_compressed", CompressedImage)
-image_pub2 = rospy.Publisher("/OAK/stream_compressed_1", CompressedImage)
+image_pub1 = rospy.Publisher("/OAK/stream_compressed", CompressedImage) #WH1
+image_pub2 = rospy.Publisher("/OAK/stream_compressed_1", CompressedImage) #Global
+image_pub3 = rospy.Publisher("/OAK/stream_compressed_2", CompressedImage) #WH2
 topic_start_recording = '/OAK/start_video_recording'
 topic_stop_recording = '/OAK/stop_video_recording'
 record_time_pub = rospy.Publisher("/OAK/record_time", String)
@@ -39,7 +41,11 @@ def createPipeline(camera_id=0):
     ###
 
     #Properties
-    if camera_id==0:
+    if camera_id==1:
+        camRgb.initialControl.setManualFocus(155) #155
+        camRgb.initialControl.setAutoFocusMode(dai.RawCameraControl.AutoFocusMode.OFF)
+        camRgb.setFps(10)
+    elif camera_id==2:
         camRgb.initialControl.setManualFocus(155) #155
         camRgb.initialControl.setAutoFocusMode(dai.RawCameraControl.AutoFocusMode.OFF)
         camRgb.setFps(10)
@@ -86,11 +92,14 @@ with contextlib.ExitStack() as stack:
         if eepromData.productName != "":
             print("   >>> Product name:", eepromData.productName)
 
-        if (str(mxId) == "14442C1061EC47D700"): #Cables
+        if (str(mxId) == "184430107197470E00"): #Global
             camID=0
-        elif (str(mxId) == "184430107197470E00"): #Global
+        elif (str(mxId) == "14442C1061EC47D700"): #Cables
             camID=1
+        elif (str(mxId) == "18443010418A4C0E00"): #WH2
+            camID=2
         else:
+            print(str(mxId))
             print("ERROR")
             exit()
         pipeline = createPipeline(camID)
@@ -121,12 +130,12 @@ with contextlib.ExitStack() as stack:
                     file_index.append(int((file.split(".")[0]).split("_")[-1]))
             new_index = str(max(file_index)+1)
 
-            img_name = "Image_cables_"+new_index+".jpg"
+            img_name = "Image_cables_wh"+str(req.cam_id)+"_"+new_index+".jpg"
             img_path = os.path.join(os.path.dirname(__file__), '../imgs/'+img_name)
-            video_0 = videoMap["cam-0"]
+            video_0 = videoMap["cam-"+str(req.cam_id)]
             videoIn = video_0.get()
             if flip:
-                    image = cv2.flip(videoIn.getCvFrame(), 0)
+                    image = cv2.flip(videoIn.getCvFrame(), -1)
             else:
                     image = videoIn.getCvFrame()
             cv2.imwrite(img_path, image)
@@ -138,7 +147,7 @@ with contextlib.ExitStack() as stack:
             #        print("Error")
             return resp        
 
-    rospy.Service(service_name, Trigger, service_callback)
+    rospy.Service(service_name, cameraCapture, service_callback)
     print("OAK capture image service available")
 
         
@@ -149,7 +158,7 @@ with contextlib.ExitStack() as stack:
     #         writer= cv2.VideoWriter('/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/videos/basicvideo.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), fps, (1920,1080))
     #         while i<(duration*fps):
     #                 print(i)
-    #                 video_1 = videoMap["cam-1"]
+    #                 video_1 = videoMap["cam-0"]
     #                 videoIn = video_1.get()
     #                 frame = videoIn.getCvFrame()
     #                 writer.write(frame)
@@ -177,7 +186,7 @@ with contextlib.ExitStack() as stack:
         i=0.0
         writer= cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), fps, (1920,1080))
         msg_time = String()
-        video_1 = videoMap["cam-1"]
+        video_1 = videoMap["cam-0"]
         while not stop_video:
                 videoIn = video_1.get()
                 frame = videoIn.getCvFrame()
@@ -193,7 +202,7 @@ with contextlib.ExitStack() as stack:
                 if seconds <= 9:
                     sec_str = "0"+sec_str
                 msg_time.data = str(min_str) + ":" + str(sec_str)
-                print(msg_time.data)
+                #print(msg_time.data)
                 record_time_pub.publish(msg_time)
 
         msg_time.data = "00:00"
@@ -224,9 +233,12 @@ with contextlib.ExitStack() as stack:
                     msg = CompressedImage()
                     msg.header.stamp = rospy.Time.now()
                     msg.format = "jpeg"
-                    if stream_name_i == "cam-0":
-                        msg.data = np.array(cv2.imencode('.jpg', cv2.flip(videoIn.getCvFrame(), 0))[1]).tostring()
-                        image_pub1.publish(msg)
+                    if stream_name_i == "cam-1":
+                        msg.data = np.array(cv2.imencode('.jpg', cv2.flip(videoIn.getCvFrame(), -1))[1]).tostring()
+                        image_pub1.publish(msg) #WH1
+                    elif stream_name_i == "cam-2":
+                        msg.data = np.array(cv2.imencode('.jpg', cv2.flip(videoIn.getCvFrame(), -1))[1]).tostring()
+                        image_pub3.publish(msg) #WH2
                     else:
                         msg.data = np.array(cv2.imencode('.jpg', videoIn.getCvFrame())[1]).tostring()                       
                         image_pub2.publish(msg)

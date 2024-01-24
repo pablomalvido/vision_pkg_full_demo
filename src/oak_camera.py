@@ -68,7 +68,8 @@ with dai.Device(pipeline) as device:
                 img_path = os.path.join(os.path.dirname(__file__), '../imgs/'+img_name)
                 videoIn = video.get()
                 if flip:
-                        image = cv2.flip(videoIn.getCvFrame(), 0)
+                        image = cv2.flip(videoIn.getCvFrame(), -1)
+                        #image = cv2.flip(image, 1)
                 else:
                         image = videoIn.getCvFrame()
                 cv2.imwrite(img_path, image)
@@ -90,7 +91,7 @@ with dai.Device(pipeline) as device:
                 i=0
                 writer= cv2.VideoWriter('/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/videos/basicvideo.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), fps, (1920,1080))
                 while i<(duration*fps):
-                        print(i)
+                        #print(i)
                         videoIn = video.get()
                         frame = videoIn.getCvFrame()
                         writer.write(frame)
@@ -112,7 +113,7 @@ with dai.Device(pipeline) as device:
                         msg.header.stamp = rospy.Time.now()
                         msg.format = "jpeg"
                         if flip:
-                                msg.data = np.array(cv2.imencode('.jpg', cv2.flip(videoIn.getCvFrame(), 0))[1]).tostring()
+                                msg.data = np.array(cv2.imencode('.jpg', cv2.flip(videoIn.getCvFrame(), -1))[1]).tostring()
                         else:
                                 msg.data = np.array(cv2.imencode('.jpg', videoIn.getCvFrame())[1]).tostring()                       
                         image_pub.publish(msg)
