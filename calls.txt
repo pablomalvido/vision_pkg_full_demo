@@ -79,7 +79,7 @@ visualize: true"
 -------------------------------------------------------------
 rosservice call /vision/grasp_point_determination_srv "img_path: '/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/imgs/test_image_EG_WH2_1.jpg'
 wh_id: '2'
-separated_cable_index: [4,5,6,7,8,9,10]
+separated_cable_index: [3,4,5,6,7,8,9,10]
 pixel_D: 5
 forward: false
 iteration: false

@@ -94,10 +94,13 @@ with contextlib.ExitStack() as stack:
 
         if (str(mxId) == "184430107197470E00"): #Global
             camID=0
-        elif (str(mxId) == "14442C1061EC47D700"): #Cables
+            print("CAM0")
+        elif (str(mxId) == "18443010418A4C0E00"): #WH1
             camID=1
-        elif (str(mxId) == "18443010418A4C0E00"): #WH2
+            print("CAM1")
+        elif (str(mxId) == "14442C1061EC47D700"): #WH2
             camID=2
+            print("CAM2")
         else:
             print(str(mxId))
             print("ERROR")
@@ -234,7 +237,8 @@ with contextlib.ExitStack() as stack:
                     msg.header.stamp = rospy.Time.now()
                     msg.format = "jpeg"
                     if stream_name_i == "cam-1":
-                        msg.data = np.array(cv2.imencode('.jpg', cv2.flip(videoIn.getCvFrame(), -1))[1]).tostring()
+                        #msg.data = np.array(cv2.imencode('.jpg', cv2.flip(videoIn.getCvFrame(), -1))[1]).tostring()
+                        msg.data = np.array(cv2.imencode('.jpg', videoIn.getCvFrame())[1]).tostring() 
                         image_pub1.publish(msg) #WH1
                     elif stream_name_i == "cam-2":
                         msg.data = np.array(cv2.imencode('.jpg', cv2.flip(videoIn.getCvFrame(), -1))[1]).tostring()
