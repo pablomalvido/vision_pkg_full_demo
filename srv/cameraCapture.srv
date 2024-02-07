@@ -1,4 +1,4 @@
-int32 cam_id #ID of de camera to take the photo with
+string cam_id #ID of de camera to take the photo with
 
 ---------------
 bool success #Success in the service execution

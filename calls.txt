@@ -29,35 +29,36 @@ visualize: false"
 rostopic pub /UI/confirm_req std_msgs/String "data: '/home/remodel/catkin_ws/src/vision_pkg_full_demo/imgs/Image_cables_0.jpg'"
 
 ------------------------------------------------
-rosservice call /vision/grasp_point_determination_srv "img_path: '/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/imgs/Image_cables_4.jpg'
-wh_id: '1'
-separated_cable_index: [8,9]
-pixel_D: 4
+rosservice call /vision/grasp_point_determination_srv "img_path: '/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/imgs/Image_cables_wh2_394.jpg'
+wh_id: '2'
+separated_cable_index: [3,4,5,6,7,8,9,10]
+pixel_D: 10
 forward: false
 iteration: false
 grasp_point_eval_mm: [0,0]
-analyzed_length: 120
-simplified: false
-visualize: true"
+analyzed_length: 100
+analyzed_grasp_length: 40
+simplified: true
+visualize: false"
 
 ---------------------------------------------------
-rosservice call /vision/grasp_point_determination_srv "img_path: '/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/imgs/Image_cables_32.jpg'
+rosservice call /vision/grasp_point_determination_srv "img_path: '/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/imgs/Image_cables_wh1_385.jpg'
 wh_id: '1'
 separated_cable_index: [8,9]
-pixel_D: 4
+pixel_D: 11
 forward: false
 iteration: false
 grasp_point_eval_mm: [0,0]
 analyzed_length: 120
-analyzed_grasp_length: 100
+analyzed_grasp_length: 30
 simplified: true
-visualize: true"
+visualize: false"
 
 -----------------------------------------------------------
-rosservice call /vision/check_cable_separation_srv "img_path: '/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/imgs/Image_cables_167.jpg'
+rosservice call /vision/check_cable_separation_srv "img_path: '/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/imgs/Image_cables_wh1_387.jpg'
 wh_id: '1'
 separated_cable_index: [8,9]
-pixel_D: 8
+pixel_D: 10
 forward: false
 iteration: false
 grasp_point_eval_mm: [35,55]
@@ -86,5 +87,17 @@ iteration: false
 grasp_point_eval_mm: [0,0]
 analyzed_length: 100
 analyzed_grasp_length: 40
+simplified: true
+visualize: false"
+-------------------------------------------------------------
+rosservice call /vision/check_cable_separation_srv "img_path: '/home/remodel/remodel_demos_ws/src/vision_pkg_full_demo/imgs/Image_cables_wh2_396.jpg'
+wh_id: '2'
+separated_cable_index: [3,4,5,6,7,8,9,10]
+pixel_D: 10
+forward: false
+iteration: false
+grasp_point_eval_mm: [35,55]
+analyzed_length: 100
+analyzed_grasp_length: 0
 simplified: true
 visualize: false"

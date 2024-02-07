@@ -178,11 +178,12 @@ class DLO_estimator():
                 grasp_z = (self.corner_mold_top_resized[0] - grasp_point[1])*self.mm_per_pixel
                 grasp_point_from_corner_x_aligned = math.cos(self.theta)*grasp_x - math.sin(self.theta)*grasp_z
                 grasp_point_from_corner_z_aligned = math.sin(self.theta)*grasp_x + math.cos(self.theta)*grasp_z
+                grasp_angle_y = grasp_point[2]
                 #grasp_point_from_corner_z_aligned = (self.corner_mold_top_resized[0] - self.mold_corner_bottom_resized[0])*self.mm_per_pixel
-                return all_points_cables_dict, grasp_point_from_corner_x_aligned, grasp_point_from_corner_z_aligned, True
+                return all_points_cables_dict, grasp_point_from_corner_x_aligned, grasp_point_from_corner_z_aligned, grasp_angle_y, True
             else:
                 print("Grasp point determination error")
-                return all_points_cables_dict, 0,0, False
+                return all_points_cables_dict, 0,0,0, False
 
         elif evaluate_grasp:
             #index = 0
@@ -211,15 +212,16 @@ def grasp_point_determination_srv_callback(req):
     total_time_init = time.time()
     p = DLO_estimator(img_path=req.img_path, all_colors=WH_info[req.wh_id]['cable_colors'], color_order = WH_info[req.wh_id]['cables_color_order'], con_points=WH_info[req.wh_id]['con_corners'], cable_D=WH_info[req.wh_id]['cable_D'], con_dim=WH_info[req.wh_id]['con_dim'], cable_lengths=WH_info[req.wh_id]['cable_lengths'], model=DLO_model, corner_mold=WH_info[req.wh_id]['mold_corners'], mold_size=WH_info[req.wh_id]['mold_dim'], index_upper=desired_grasp_cables[0], pixel_D=req.pixel_D, analyzed_length=req.analyzed_length, analyzed_grasp_length=req.analyzed_grasp_length, segm_opt=2, simplified=req.simplified)
     if not show_imgs:
-        all_points_cables, grasp_point_from_corner_x, grasp_point_from_corner_z, success = p.exec(req.forward, req.iteration, determine_GP = True)
-        #grasp_point_from_corner_z+=8
+        all_points_cables, grasp_point_from_corner_x, grasp_point_from_corner_z, grasp_angle_y, success = p.exec(req.forward, req.iteration, determine_GP = True)
+        #grasp_point_from_corner_z+=1.5 #WH1
+        grasp_point_from_corner_z+=4 #WH2
         #print(grasp_point_from_corner_z)
         #grasp_point_from_corner_z = 0
         total_time = time.time() - total_time_init
         print("Computation time: " + str(total_time) + "s")
         print("--------------------------------------------------")
 
-        resp.grasp_point = [grasp_point_from_corner_x, grasp_point_from_corner_z]
+        resp.grasp_point = [grasp_point_from_corner_x, grasp_point_from_corner_z, grasp_angle_y]
     else:
         cv.waitKey(0)
     resp.success = success
@@ -284,7 +286,7 @@ if __name__ == "__main__": #Load the model and define some info for each WH in a
     red_cable = [53,49,181]
     black_cable = [10,10,10]#[57,54,71]
     white_cable = [239,238,254]
-    brown_cable = [27,43,80]
+    brown_cable = [12,44,83]#[14,46,92]#[12,44,83]#[58,75,118]#[27,43,80]
     pink_cable = [134,133,179]
 
     #Define WHs info
@@ -301,8 +303,8 @@ if __name__ == "__main__": #Load the model and define some info for each WH in a
     #WH_info['1']['mold_dim'] = 40
     # WH_info['1']['con_corners'] = [[550, 688], [333, 686]] #below,above [y,x]. 4
     # WH_info['1']['mold_corners'] = [[294, 682], [550, 681]] #above,below [y,x]. 4
-    WH_info['1']['con_corners'] = [[552, 890], [328, 895]] #below,above [y,x]. #[557, 890], [345, 895]. 10
-    WH_info['1']['mold_corners'] = [[262, 891], [557, 884]] #above,below [y,x]. 10
+    WH_info['1']['con_corners'] =  [[553, 863], [333, 865]] #[[552, 890], [328, 895]] #below,above [y,x]. #[557, 890], [345, 895]. 10
+    WH_info['1']['mold_corners'] = [[294, 865], [553, 863]] #[[262, 891], [557, 884]] #above,below [y,x]. 10
     WH_info['1']['mold_dim'] = 32
     
     WH_info['2'] = {}
@@ -314,8 +316,8 @@ if __name__ == "__main__": #Load the model and define some info for each WH in a
     WH_info['2']['con_dim'] = 29.7
     WH_info['2']['cable_D'] = 1.32
     #ToDo
-    WH_info['2']['con_corners'] = [[580, 531], [300, 522]] #below,above [y,x]
-    WH_info['2']['mold_corners'] = [[259, 520], [580, 531]] #above,below [y,x]. These points are fixed as the image is always taken from the same position
+    WH_info['2']['con_corners'] = [[580, 531], [280, 522]]#[[580, 531], [300, 522]] #below,above [y,x]
+    WH_info['2']['mold_corners'] = [[259, 520], [580, 531]]#[[259, 520], [580, 531]] #above,below [y,x]. These points are fixed as the image is always taken from the same position
     WH_info['2']['mold_dim'] = 34.7 #CHECKKK
 
     #Load model
