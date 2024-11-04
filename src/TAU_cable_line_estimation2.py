@@ -88,4 +88,4 @@ class TAUCableLineEstimation(TAUCableLineEstimationInterface):
             points_line_yx.append([int(y_line), x_line])
             points_line_xy.append([x_line, int(y_line)])
 
-        return points_line_yx, points_line_xy
+        return points_line_yx, points_line_xy, p_fit_best

@@ -1,0 +1,14 @@
+string img_path #Absolute path
+string wh_id #'1' or '2', wire harness structure is defined in TAU_supervisor.py
+int32 pixel_D #Normally it is set to 4
+bool forward
+bool iteration
+int32 segm_opt #Segmentation options: 0: color filter + edge detector, 1: color filter + edge detector + borders discard, 2: UNet model
+int32 analyzed_length #Cable length in mm to be analyzed (Normally 50-100)
+bool visualize #False to calculate, True to just visualize initial points
+int32[] connector_lower_corner #[y,x] pixel
+int32[] connector_upper_corner #[y,x] pixel
+
+---------------
+bool success #Success in the service execution
+string result #Text indicating the separation result
