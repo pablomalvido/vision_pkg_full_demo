@@ -5,9 +5,9 @@
 
 This system is presented in two research articles: 
 
-* Malvido Fresnillo, P., Vasudevan, S., Mohammed, W. M., Martinez Lastra, J. L., & Perez Garcia, J. A. (2023). An approach based on machine vision for the identification and shape estimation of deformable linear objects. Mechatronics, 96, 103085. doi: 10.1016/j.mechatronics.2023.103085 (https://www.sciencedirect.com/science/article/pii/S0957415823001411): Introduces the computer vision algorithm pipeline.
+* *Malvido Fresnillo, P., Vasudevan, S., Mohammed, W. M., Martinez Lastra, J. L., & Perez Garcia, J. A. (2023). An approach based on machine vision for the identification and shape estimation of deformable linear objects. Mechatronics, 96, 103085. doi: 10.1016/j.mechatronics.2023.103085* (https://www.sciencedirect.com/science/article/pii/S0957415823001411): Introduces the computer vision algorithm pipeline.
 
-* MalvidoFresnillo, P., Mohammed, W. M., Vasudevan, S., PerezGarcia, J. A., & MartinezLastra, J. L. (2024). Generation of realistic synthetic cable images to train deep learning segmentation models. Machine Vision and Applications, 35(4), 1–14. doi: 10.1007/s00138-024-01562-y (https://link.springer.com/article/10.1007/s00138-024-01562-y): Proposes a methodology to generate photo-realistic synthetic DLO images (and their corresponding segmentation masks) using Blender. This allows to enhance the semantic segmentation module of the system with a U-Net model trained on the synthetic cables dataset.
+* *MalvidoFresnillo, P., Mohammed, W. M., Vasudevan, S., PerezGarcia, J. A., & MartinezLastra, J. L. (2024). Generation of realistic synthetic cable images to train deep learning segmentation models. Machine Vision and Applications, 35(4), 1–14. doi: 10.1007/s00138-024-01562-y* (https://link.springer.com/article/10.1007/s00138-024-01562-y): Proposes a methodology to generate photo-realistic synthetic DLO images (and their corresponding segmentation masks) using Blender. This allows to enhance the semantic segmentation module of the system with a U-Net model trained on the synthetic cables dataset.
 
 The proposed approach processes the different DLOs in the image sequentially, repeating the following procedure for each of them. First, the DLO is segmented. Three different segmentation techniques can be used (edges and color analysis (0), edges and color analysis + spurious edges detector (1), U-Net segmentation (2)). Next, the remaining pixels are analyzed using evaluation windows to identify a series of points along the DLO’s skeleton. These points are  then employed to model the DLO’s shape using a polynomial function. Finally, the output is evaluated by an unsupervised self-critique module, which  validates the results, or fine-tunes the system’s parameters and repeats the process.
 
@@ -35,11 +35,11 @@ The following parameters need to be modified in the **TAU_supervisor.py** file t
 
 *  `cable_color_order`: Order of the cables from bottom to top
 
-*  `con_corner_below`: Position of the lower corner of the wiring harness connector
+*  `cable_lengths`: Length of the cables in mm from bottom to top
 
-*  `con_corner_above`: Position of the upper corner of the wiring harness connector
+*  `con_dim`: Size of the main wiring harness connector in mm
 
-*  `con_dim`: Size of the wiring harness connector in mm
+* `mold_dim`: Size of the mold/fixture for the main wiring harness connector in mm (Optional)
 
 *  `cable_D`: Diameter of the smallest DLO in mm
   
