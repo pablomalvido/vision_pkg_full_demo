@@ -1,25 +1,68 @@
-rosservice call /vision/grasp_point_determination_srv "img_path: '/home/remodel/catkin_ws/src/vision_pkg_full_demo/imgs/Image_cables_0.jpg'
+rosservice call /vision/estimate_cables_shape_srv "img_path: '/home/remodel/catkin_ws/src/vision_pkg_full_demo/test_images/wh1_multicolor.jpeg'
+wh_id: '1'
+pixel_D: 4
+forward: false
+iteration: false
+segm_opt: 2
+analyzed_length: 120
+visualize: false
+connector_lower_corner: [698, 107]
+connector_upper_corner: [472, 129]"
+-------------------------------------------------
+
+rosservice call /vision/estimate_cables_shape_srv "img_path: '/home/remodel/catkin_ws/src/vision_pkg_full_demo/test_images/wh1_guides_mirror.jpg'
+wh_id: '1'
+pixel_D: 6
+forward: false
+iteration: false
+segm_opt: 0
+analyzed_length: 120
+visualize: false
+connector_lower_corner: [420, 195]
+connector_upper_corner: [280, 192]"
+-------------------------------------------------
+
+rosservice call /vision/estimate_cables_shape_srv "img_path: '/home/remodel/catkin_ws/src/vision_pkg_full_demo/test_images/wh1_pinkblue.jpeg'
+wh_id: '1'
+pixel_D: 4
+forward: false
+iteration: false
+segm_opt: 2
+analyzed_length: 120
+visualize: false
+connector_lower_corner: [500, 185]
+connector_upper_corner: [270, 185]"
+
+-------------------------------------------------
+rosservice call /vision/grasp_point_determination_srv "img_path: '/home/remodel/catkin_ws/src/vision_pkg_full_demo/test_images/Image_cables_wh1_267.jpg'
 wh_id: '1'
 separated_cable_index: [8,9]
-pixel_D: 4
+pixel_D: 6
 forward: false
 iteration: false
 grasp_point_eval_mm: [0,0]
 analyzed_length: 120
-simplified: true
-visualize: false"
+simplified: false
+visualize: false
+connector_lower_corner: [553, 863]
+connector_upper_corner: [333, 865]
+mold_lower_corner: [553, 863]
+mold_upper_corner: [294, 865]"
 
 -------------------------------------------------
-rosservice call /vision/check_cable_separation_srv "img_path: '/home/remodel/catkin_ws/src/vision_pkg_full_demo/imgs/Image_cables_1.jpg'
+rosservice call /vision/check_cable_separation_srv "img_path: '/home/remodel/catkin_ws/src/vision_pkg_full_demo/test_images/Image_cables_wh1_258.jpg'
 wh_id: '1'
 separated_cable_index: [8,9]
-pixel_D: 4
-forward: false
+pixel_D: 8
+forward: true
 iteration: false
-grasp_point_eval_mm: [35,55]
+grasp_point_eval_mm: [30,100]
 analyzed_length: 150
-simplified: true
-visualize: false"
+simplified: false
+visualize: false
+connector_lower_corner: [550, 865]
+connector_upper_corner: [314, 867]
+mold_lower_corner: [553, 863]
+mold_upper_corner: [294, 865]"
 
 ------------------------------------------------
-rostopic pub /UI/confirm_req std_msgs/String "data: '/home/remodel/catkin_ws/src/vision_pkg_full_demo/imgs/Image_cables_0.jpg'"

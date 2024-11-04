@@ -6,11 +6,15 @@ bool forward
 bool iteration
 int32[] grasp_point_eval_mm #[y,x] mm from the top corner of the mold. Positive y and x
 int32 analyzed_length #Cable length in mm to be analyzed (Normally 50-100)
-bool simplified #True to calculates just the cables of interest, False to calculate all the cables
+bool simplified #True to calculate just the cables of interest, False to calculate all the cables
 bool visualize #False to calculate, True to just visualize initial points
+int32[] connector_lower_corner #[y,x] pixel
+int32[] connector_upper_corner #[y,x] pixel
+int32[] mold_lower_corner #[y,x] pixel
+int32[] mold_upper_corner #[y,x] pixel
 
 ---------------
 bool success #Success in the service execution
 bool separation_success #The correct cables were grasped
 string result #Text indicating the separation result
-float64[] grasp_point #[x,y] mm from the top corner of the mold
+float64[] grasp_point #[x,y] mm from the top corner of the mold[]

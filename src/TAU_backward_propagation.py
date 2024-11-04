@@ -44,6 +44,8 @@ class TAUBackwardPropagation(TAUBackwardPropagationInterface):
 
         #Discard repeated lines (More than 60% (change to 80%??) of repeated points)
         detected_lines = []
+        if len(sorted_lines)==0:
+            return [],[],False
         detected_lines.append(sorted_lines[0])
         for line in sorted_lines[1:]:
             for line_det in detected_lines:
@@ -168,8 +170,14 @@ class TAUBackwardPropagation(TAUBackwardPropagationInterface):
 
         all_lines = []
         for line_points in corrected_lines:
-            all_points_yx, all_points_xy = self.line_estimation.exec(line_points, step_line=1, limits = [initial_point[init_index][1], max(line_points,key=lambda x:x[1])[1]]) #initial_point is yx
-            all_lines.append(all_points_yx)
+            try:
+                all_points_yx, all_points_xy, line_coefs = self.line_estimation.exec(line_points, step_line=1, limits = [initial_point[init_index][1], max(line_points,key=lambda x:x[1])[1]]) #initial_point is yx
+                all_lines.append(all_points_yx)
+            except:
+                print("Error backward propagation")
+        
+        if len(all_lines)==0:
+            return [],[],False
 
         #Identify each cable if there are more than 1
         min_dist_init = 1000

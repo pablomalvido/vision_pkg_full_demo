@@ -40,17 +40,20 @@ class TAUPreprocessing(TAUPreprocessingInterface):
         grasping_point_eval_px = [int(self.mold_corner[0][0]-(self.grasping_point_eval_mm[0]/mm_per_pixel_original)), int((self.grasping_point_eval_mm[1]/mm_per_pixel_original)+self.mold_corner[0][1])]
         cable_length_px = int(self.cable_length/mm_per_pixel_original)
         analyzed_length_px = int(self.analyzed_length/mm_per_pixel_original)
-        if self.grasp_area == [0,0]:
-            min_row = min(0, self.mold_corner[1][0]-int(50/mm_per_pixel_original))
-            max_row = max(self.img.shape[0], self.mold_corner[0][0]+int(50/mm_per_pixel_original))
-        else:
+        min_col = max(min(self.con_points[0][1], self.con_points[1][1]) - 15, 0)
+        if self.mold_corner==[[0,0],[0,0]]: #Shape estimation
             min_row = 0
             max_row = self.img.shape[0]
-        min_col = max(min(self.con_points[0][1], self.con_points[1][1]) - 15, 0)
-        if self.grasp_area == [0,0]:
+            max_col = min(min_col + cable_length_px, self.img.shape[1])
+        elif self.grasp_area == [0,0]: #Grasp point computation
+            min_row = min(0, self.mold_corner[1][0]-int(50/mm_per_pixel_original))
+            max_row = max(self.img.shape[0], self.mold_corner[0][0]+int(50/mm_per_pixel_original))
             max_col = min(min_col + cable_length_px, min_col + analyzed_length_px, self.img.shape[1])
-        else:
+        else: #Cable separation evaluation
+            min_row = 0
+            max_row = self.img.shape[0]
             max_col = max(grasping_point_eval_px[1] + int(self.grasp_area[1]/2) + int(30/mm_per_pixel_original), min(min_col + cable_length_px, min_col + analyzed_length_px, self.img.shape[1]))
+            
         crop_img = copy.deepcopy(self.img[min_row:max_row, min_col:max_col])
 
         n_row = int(crop_img.shape[0]/scale)
